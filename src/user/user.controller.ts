@@ -1,4 +1,12 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Get,
+    NotFoundException,
+    Param,
+    Post
+} from '@nestjs/common';
 import { CreateUserDto } from './dtos/createUser.dto';
 import { Users } from '@prisma/client';
 import { UserService } from './user.service';
@@ -6,6 +14,17 @@ import { UserService } from './user.service';
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService) {}
+
+    @Get('/:id')
+    public async show(@Param('id') id: string): Promise<Users> {
+        const user = await this.userService.findById(id);
+
+        if (!user) {
+            throw new NotFoundException('User not found!');
+        }
+
+        return user;
+    }
 
     @Post()
     public async store(@Body() createUser: CreateUserDto): Promise<Users> {

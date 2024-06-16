@@ -12,11 +12,11 @@ export class UserService {
         const passwordHashed = await hash(data?.password, saltOrRounds);
         const userData: Prisma.UsersCreateInput = {
             ...data,
-            password: passwordHashed,
+            password: passwordHashed
         };
 
         const newUser = await this.prismaService.users.create({
-            data: userData,
+            data: userData
         });
 
         return newUser;
@@ -24,7 +24,15 @@ export class UserService {
 
     public async findByEmail(email: string): Promise<Users | null> {
         const user = await this.prismaService.users.findFirst({
-            where: { email: email },
+            where: { email: email }
+        });
+
+        return user;
+    }
+
+    public async findById(id: string): Promise<Users | null> {
+        const user = await this.prismaService.users.findFirst({
+            where: { id: id }
         });
 
         return user;
