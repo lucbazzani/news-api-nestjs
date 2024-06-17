@@ -3,7 +3,9 @@ import {
     BadRequestException,
     Body,
     Controller,
+    Delete,
     Get,
+    HttpCode,
     NotFoundException,
     Param,
     Post,
@@ -84,5 +86,20 @@ export class CategoriesController {
         });
 
         return categoryUpdated;
+    }
+
+    @Delete('/:id')
+    @HttpCode(204)
+    public async delete(@Param('id') id: string): Promise<void> {
+        const categoryById = await this.categoriesService.findById(id);
+        if (!categoryById) {
+            throw new NotFoundException('Category not found!');
+        }
+
+        /**
+         * TODO validate if category is in use
+         */
+
+        await this.categoriesService.delete(id);
     }
 }

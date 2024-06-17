@@ -45,4 +45,11 @@ export class CategoriesService {
 
         return updatedCategory;
     }
+
+    public async delete(id: string): Promise<Categories> {
+        const deletedCategory = await this.prismaService.categories.delete({
+            where: { id: id }
+        });
+        return deletedCategory;
+    }
 }
