@@ -42,4 +42,12 @@ export class NewsService {
 
         return findNewsByCategory;
     }
+
+    public async findByAuthor(author_id: string): Promise<News[]> {
+        const findNewsByAuthor = await this.prismaService.news.findMany({
+            where: { author_id: author_id }
+        });
+
+        return findNewsByAuthor;
+    }
 }

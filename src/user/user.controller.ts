@@ -16,10 +16,14 @@ import { CreateUserDto } from './dtos/createUser.dto';
 import { Users } from '@prisma/client';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dtos/updateUser.dto';
+import { NewsService } from 'src/news/news.service';
 
 @Controller('users')
 export class UserController {
-    constructor(private userService: UserService) {}
+    constructor(
+        private userService: UserService,
+        private newsService: NewsService
+    ) {}
 
     @Get('/:id')
     public async show(@Param('id') id: string): Promise<Users> {
@@ -89,9 +93,10 @@ export class UserController {
             throw new NotFoundException('User not found!');
         }
 
-        /**
-         * TODO validate if category is in use
-         */
+        const findAuthorInNews = await this.newsService.findByAuthor(id);
+        if (findAuthorInNews.length > 0) {
+            throw new BadRequestException('Cannot remove a user who has news authored!');
+        }
 
         await this.userService.delete(id);
     }
