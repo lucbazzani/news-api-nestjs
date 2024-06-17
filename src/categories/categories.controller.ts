@@ -16,10 +16,14 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
 import { Categories } from '@prisma/client';
+import { NewsService } from 'src/news/news.service';
 
 @Controller('categories')
 export class CategoriesController {
-    constructor(private categoriesService: CategoriesService) {}
+    constructor(
+        private categoriesService: CategoriesService,
+        private newsService: NewsService
+    ) {}
 
     @Get('/:id')
     public async show(@Param('id') id: string): Promise<Categories> {
@@ -96,9 +100,10 @@ export class CategoriesController {
             throw new NotFoundException('Category not found!');
         }
 
-        /**
-         * TODO validate if category is in use
-         */
+        const findCategoryInNews = await this.newsService.findByCategory(id);
+        if (findCategoryInNews.length > 0) {
+            throw new BadRequestException('Cannot remove a category in use!');
+        }
 
         await this.categoriesService.delete(id);
     }

@@ -2,7 +2,9 @@ import {
     BadRequestException,
     Body,
     Controller,
+    Get,
     NotFoundException,
+    Param,
     Post,
     UsePipes,
     ValidationPipe
@@ -46,6 +48,22 @@ export class NewsController {
         }
 
         const news = await this.newsService.create(createNews);
+        return news;
+    }
+
+    @Get()
+    public async listAll(): Promise<News[]> {
+        const newsList = await this.newsService.findAll();
+        return newsList;
+    }
+
+    @Get('/:id')
+    public async show(@Param('id') id: string): Promise<News> {
+        const news = await this.newsService.findById(id);
+        if (!news) {
+            throw new NotFoundException('News not found!');
+        }
+
         return news;
     }
 }
