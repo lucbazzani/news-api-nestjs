@@ -1,4 +1,5 @@
 import {
+    BadGatewayException,
     BadRequestException,
     Body,
     Controller,
@@ -6,6 +7,7 @@ import {
     NotFoundException,
     Param,
     Post,
+    Put,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common';
@@ -49,5 +51,38 @@ export class CategoriesController {
     public async listAll(): Promise<Categories[]> {
         const categories = await this.categoriesService.findAll();
         return categories;
+    }
+
+    @UsePipes(ValidationPipe)
+    @Put('/:id')
+    public async update(
+        @Body() categoryData: CreateCategoryDto,
+        @Param('id') id: string
+    ): Promise<Categories> {
+        if (!categoryData?.name) {
+            throw new BadGatewayException('Name is required!');
+        }
+
+        const categoryById = await this.categoriesService.findById(id);
+        if (!categoryById) {
+            throw new NotFoundException('Category not found!');
+        }
+
+        if (categoryData?.name !== categoryById?.name) {
+            const categoryByName = await this.categoriesService.findByName(categoryData?.name);
+
+            if (categoryByName) {
+                throw new BadRequestException('Name not available!');
+            }
+        } else {
+            throw new BadRequestException('Category already has the name entered!');
+        }
+
+        const categoryUpdated = await this.categoriesService.update({
+            id: id,
+            data: categoryData
+        });
+
+        return categoryUpdated;
     }
 }
