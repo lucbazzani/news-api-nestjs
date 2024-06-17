@@ -4,6 +4,7 @@ import {
     Controller,
     Delete,
     Get,
+    HttpCode,
     NotFoundException,
     Param,
     Post,
@@ -80,12 +81,17 @@ export class UserController {
     }
 
     @Delete('/:id')
+    @HttpCode(204)
     public async delete(@Param('id') id: string): Promise<void> {
         const user = await this.userService.findById(id);
 
         if (!user) {
             throw new NotFoundException('User not found!');
         }
+
+        /**
+         * TODO validate if category is in use
+         */
 
         await this.userService.delete(id);
     }
