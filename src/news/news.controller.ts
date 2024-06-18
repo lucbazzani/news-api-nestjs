@@ -15,8 +15,8 @@ import {
 import { NewsService } from './news.service';
 import { CreateNewsDto } from './dtos/createNews.dto';
 import { News } from '@prisma/client';
-import { UserService } from 'src/user/user.service';
-import { CategoriesService } from 'src/categories/categories.service';
+import { UserService } from '../user/user.service';
+import { CategoriesService } from '../categories/categories.service';
 import { UpdateNewsDto } from './dtos/updateNews.dto';
 
 @Controller('news')

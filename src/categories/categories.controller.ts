@@ -16,7 +16,7 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
 import { Categories } from '@prisma/client';
-import { NewsService } from 'src/news/news.service';
+import { NewsService } from '../news/news.service';
 
 @Controller('categories')
 export class CategoriesController {

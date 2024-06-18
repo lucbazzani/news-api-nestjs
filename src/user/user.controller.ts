@@ -16,7 +16,7 @@ import { CreateUserDto } from './dtos/createUser.dto';
 import { Users } from '@prisma/client';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dtos/updateUser.dto';
-import { NewsService } from 'src/news/news.service';
+import { NewsService } from '../news/news.service';
 
 @Controller('users')
 export class UserController {
