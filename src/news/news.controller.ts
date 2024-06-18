@@ -2,7 +2,9 @@ import {
     BadRequestException,
     Body,
     Controller,
+    Delete,
     Get,
+    HttpCode,
     NotFoundException,
     Param,
     Post,
@@ -95,5 +97,16 @@ export class NewsController {
         });
 
         return updatedNews;
+    }
+
+    @Delete('/:id')
+    @HttpCode(204)
+    public async delete(@Param('id') id: string): Promise<void> {
+        const findNewsById = await this.newsService.findById(id);
+        if (!findNewsById) {
+            throw new NotFoundException('News not found!');
+        }
+
+        await this.newsService.delete(id);
     }
 }

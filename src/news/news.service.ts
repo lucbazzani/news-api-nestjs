@@ -66,4 +66,12 @@ export class NewsService {
 
         return updatedNews;
     }
+
+    public async delete(id: string): Promise<News> {
+        const deletedNew = await this.prismaService.news.delete({
+            where: { id: id }
+        });
+
+        return deletedNew;
+    }
 }
