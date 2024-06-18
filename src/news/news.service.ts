@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { News, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateNewsDto } from './dtos/updateNews.dto';
 
 @Injectable()
 export class NewsService {
@@ -49,5 +50,20 @@ export class NewsService {
         });
 
         return findNewsByAuthor;
+    }
+
+    public async update(params: {
+        id: string;
+        newsData: UpdateNewsDto;
+    }): Promise<News> {
+        const { id, newsData } = params;
+        const { title, content, category_id } = newsData;
+
+        const updatedNews = await this.prismaService.news.update({
+            where: { id: id },
+            data: { title: title, content: content, category_id: category_id }
+        });
+
+        return updatedNews;
     }
 }

@@ -6,6 +6,7 @@ import {
     NotFoundException,
     Param,
     Post,
+    Put,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { CreateNewsDto } from './dtos/createNews.dto';
 import { News } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 import { CategoriesService } from 'src/categories/categories.service';
+import { UpdateNewsDto } from './dtos/updateNews.dto';
 
 @Controller('news')
 export class NewsController {
@@ -65,5 +67,33 @@ export class NewsController {
         }
 
         return news;
+    }
+
+    @UsePipes(ValidationPipe)
+    @Put('/:id')
+    public async update(
+        @Param('id') id: string,
+        @Body() newsData: UpdateNewsDto
+    ): Promise<News> {
+        if (!newsData) {
+            throw new BadRequestException('News data is required!');
+        }
+
+        const findNewsById = await this.newsService.findById(id);
+        if (!findNewsById) {
+            throw new NotFoundException('News not found!');
+        }
+
+        const categoryExists = await this.categoriesService.findById(newsData?.category_id);
+        if (!categoryExists) {
+            throw new NotFoundException('Category not found!');
+        }
+
+        const updatedNews = await this.newsService.update({
+            id,
+            newsData
+        });
+
+        return updatedNews;
     }
 }
