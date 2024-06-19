@@ -18,28 +18,39 @@ import { News } from '@prisma/client';
 import { UserService } from '../user/user.service';
 import { CategoriesService } from '../categories/categories.service';
 import { UpdateNewsDto } from './dtos/updateNews.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('news')
 export class NewsController {
     constructor(
         private newsService: NewsService,
         private userService: UserService,
-        private categoriesService: CategoriesService
+        private categoriesService: CategoriesService,
+        private prismaService: PrismaService
     ) {}
 
     @UsePipes(ValidationPipe)
     @Post()
     public async store(@Body() createNews: CreateNewsDto): Promise<News> {
-        const { author_id, category_id } = createNews;
+        const { author_id, categories } = createNews;
 
         const findUserById = await this.userService.findById(author_id);
         if (!findUserById) {
             throw new NotFoundException('Author not found!');
         }
 
-        const findCategoryById = await this.categoriesService.findById(category_id);
-        if (!findCategoryById) {
-            throw new NotFoundException('Category not found!');
+        if (!categories || categories.length < 1) {
+            throw new BadRequestException('Category is required!');
+        }
+
+        for (const { id } of categories) {
+            await this.prismaService.categories
+                .findFirstOrThrow({
+                    where: { id: id }
+                })
+                .catch(() => {
+                    throw new NotFoundException('Category not found!');
+                });
         }
 
         if (!createNews?.title || !createNews?.content) {
@@ -51,7 +62,11 @@ export class NewsController {
             throw new BadRequestException('Title is not available!');
         }
 
-        const news = await this.newsService.create(createNews);
+        const news = await this.newsService.create({
+            ...createNews,
+            categories: { connect: categories.map(({ id }) => ({ id })) }
+        });
+
         return news;
     }
 

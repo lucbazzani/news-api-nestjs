@@ -9,20 +9,33 @@ export class NewsService {
 
     public async create(newsData: Prisma.NewsUncheckedCreateInput): Promise<News> {
         const news = await this.prismaService.news.create({
-            data: newsData
+            data: newsData,
+            include: {
+                author: true,
+                categories: true
+            }
         });
 
         return news;
     }
 
     public async findAll(): Promise<News[]> {
-        const newsList = this.prismaService.news.findMany();
+        const newsList = this.prismaService.news.findMany({
+            include: {
+                author: true,
+                categories: true
+            }
+        });
         return newsList;
     }
 
     public async findById(id: string): Promise<News | null> {
         const newsById = await this.prismaService.news.findFirst({
-            where: { id: id }
+            where: { id: id },
+            include: {
+                author: true,
+                categories: true
+            }
         });
 
         return newsById;
@@ -38,7 +51,8 @@ export class NewsService {
 
     public async findByCategory(category_id: string): Promise<News[]> {
         const findNewsByCategory = await this.prismaService.news.findMany({
-            where: { category_id: category_id }
+            // where: { category_id: category_id }
+            where: { id: category_id }
         });
 
         return findNewsByCategory;
@@ -61,7 +75,8 @@ export class NewsService {
 
         const updatedNews = await this.prismaService.news.update({
             where: { id: id },
-            data: { title: title, content: content, category_id: category_id }
+            //data: { title: title, content: content, category_id: category_id }
+            data: { title: title, content: content, id: category_id }
         });
 
         return updatedNews;

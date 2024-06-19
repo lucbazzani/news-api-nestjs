@@ -1,3 +1,4 @@
+import { Categories } from '@prisma/client';
 import { IsString } from 'class-validator';
 
 export class CreateNewsDto {
@@ -10,6 +11,5 @@ export class CreateNewsDto {
     @IsString()
     author_id: string;
 
-    @IsString()
-    category_id: string;
+    categories: Categories[];
 }
