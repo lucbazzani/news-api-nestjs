@@ -3,6 +3,7 @@
 <br>
 <p align="center">
   API de Portal de Notícias em Nestjs com o critério de ao menos um relacionamento 1:1 (User x Profile) e um relacionamento n:n (News x Categories). Banco de Dados SQLite utilizando a ferramenta Prisma.
+  Foi tambem implementada autenticação de usuario via token JWT.
 </p>
 <br>
 
