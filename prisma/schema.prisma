@@ -20,24 +20,24 @@ model Users {
   password   String
   created_at DateTime? @default(now())
   news       News[]
-  //profile    Profile @relation(fields: [profile_id], references: [id])
-  //profile_id String @unique
+
+  profile Profile?
 }
 
-//model Profile {
-//  id         String @id @default(uuid())
-//  name       String
-//  bio        String
-//  avatar_url String
-//  type       String
-//
-//  user       Users?
-//}
+model Profile {
+  id         String    @id @default(uuid())
+  bio        String
+  avatar_url String
+  type       String
+  created_at DateTime? @default(now())
+  user       Users     @relation(fields: [user_id], references: [id])
+  user_id    String    @unique
+}
 
 model Categories {
-  id         String             @id @default(uuid())
+  id         String    @id @default(uuid())
   name       String
-  created_at DateTime?          @default(now())
+  created_at DateTime? @default(now())
   news       News[]
 }
 

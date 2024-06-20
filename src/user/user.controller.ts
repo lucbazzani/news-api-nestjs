@@ -17,12 +17,14 @@ import { Users } from '@prisma/client';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { NewsService } from '../news/news.service';
+import { ProfileService } from 'src/profile/profile.service';
 
 @Controller('users')
 export class UserController {
     constructor(
         private userService: UserService,
-        private newsService: NewsService
+        private newsService: NewsService,
+        private profileService: ProfileService
     ) {}
 
     @Get('/:id')
@@ -93,9 +95,14 @@ export class UserController {
             throw new NotFoundException('User not found!');
         }
 
+        const findUserByProfileId = await this.profileService.findByUserId(id);
+        if (findUserByProfileId && user.id === findUserByProfileId.user_id) {
+            throw new BadRequestException('Cannot remove an user with a profile added to it!');
+        }
+
         const findAuthorInNews = await this.newsService.findByAuthor(id);
         if (findAuthorInNews.length > 0) {
-            throw new BadRequestException('Cannot remove a user who has news authored!');
+            throw new BadRequestException('Cannot remove an user who has news authored!');
         }
 
         await this.userService.delete(id);
