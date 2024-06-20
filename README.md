@@ -1,8 +1,24 @@
+## API PORTAL DE NOTICIAS
+
+<br>
+<p align="center">
+  API de Portal de Notícias em Nestjs com o critério de ao menos um relacionamento 1:1 (User x Profile) e um relacionamento n:n (News x Categories). Banco de Dados SQLite utilizando a ferramenta Prisma.
+</p>
+<br>
+
+## Modelo Entidade Relacionamento
+
+<br>
+<p align="center">
+  <img src="assets/img/Eu_Medico_Residente-MER_API_Challenge.png" alt="MER API" />
+</p>
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-image]:
+    https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
   <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
@@ -60,13 +76,15 @@ $ npm run test:cov
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors
+and support by the amazing backers. If you'd like to join them, please
+[read more here](https://docs.nestjs.com/support).
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+-   Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+-   Website - [https://nestjs.com](https://nestjs.com/)
+-   Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
