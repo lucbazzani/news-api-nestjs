@@ -16,7 +16,6 @@ import { NewsService } from './news.service';
 import { CreateNewsDto } from './dtos/createNews.dto';
 import { News } from '@prisma/client';
 import { UserService } from '../user/user.service';
-import { CategoriesService } from '../categories/categories.service';
 import { UpdateNewsDto } from './dtos/updateNews.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -25,18 +24,26 @@ export class NewsController {
     constructor(
         private newsService: NewsService,
         private userService: UserService,
-        private categoriesService: CategoriesService,
         private prismaService: PrismaService
     ) {}
 
     @UsePipes(ValidationPipe)
     @Post()
-    public async store(@Body() createNews: CreateNewsDto): Promise<News> {
-        const { author_id, categories } = createNews;
+    public async store(@Body() newsData: CreateNewsDto): Promise<News> {
+        const { author_id, categories } = newsData;
 
         const findUserById = await this.userService.findById(author_id);
         if (!findUserById) {
             throw new NotFoundException('Author not found!');
+        }
+
+        if (!newsData?.title || !newsData?.content) {
+            throw new BadRequestException('Title and Content are required!');
+        }
+
+        const newsByTitle = await this.newsService.findByTitle(newsData?.title);
+        if (newsByTitle) {
+            throw new BadRequestException('Title is not available!');
         }
 
         if (!categories || categories.length < 1) {
@@ -53,17 +60,8 @@ export class NewsController {
                 });
         }
 
-        if (!createNews?.title || !createNews?.content) {
-            throw new BadRequestException('Title and Content are required!');
-        }
-
-        const newsByTitle = await this.newsService.findByTitle(createNews?.title);
-        if (newsByTitle) {
-            throw new BadRequestException('Title is not available!');
-        }
-
         const news = await this.newsService.create({
-            ...createNews,
+            ...newsData,
             categories: { connect: categories.map(({ id }) => ({ id })) }
         });
 
@@ -99,11 +97,6 @@ export class NewsController {
         const findNewsById = await this.newsService.findById(id);
         if (!findNewsById) {
             throw new NotFoundException('News not found!');
-        }
-
-        const categoryExists = await this.categoriesService.findById(newsData?.category_id);
-        if (!categoryExists) {
-            throw new NotFoundException('Category not found!');
         }
 
         const updatedNews = await this.newsService.update({

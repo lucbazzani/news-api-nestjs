@@ -51,8 +51,13 @@ export class NewsService {
 
     public async findByCategory(category_id: string): Promise<News[]> {
         const findNewsByCategory = await this.prismaService.news.findMany({
-            // where: { category_id: category_id }
-            where: { id: category_id }
+            where: {
+                categories: {
+                    some: {
+                        id: category_id
+                    }
+                }
+            }
         });
 
         return findNewsByCategory;
@@ -60,7 +65,10 @@ export class NewsService {
 
     public async findByAuthor(author_id: string): Promise<News[]> {
         const findNewsByAuthor = await this.prismaService.news.findMany({
-            where: { author_id: author_id }
+            where: { author_id: author_id },
+            include: {
+                categories: true
+            }
         });
 
         return findNewsByAuthor;
@@ -71,12 +79,15 @@ export class NewsService {
         newsData: UpdateNewsDto;
     }): Promise<News> {
         const { id, newsData } = params;
-        const { title, content, category_id } = newsData;
+        const { title, content } = newsData;
 
         const updatedNews = await this.prismaService.news.update({
             where: { id: id },
-            //data: { title: title, content: content, category_id: category_id }
-            data: { title: title, content: content, id: category_id }
+            data: { title: title, content: content },
+            include: {
+                author: true,
+                categories: true
+            }
         });
 
         return updatedNews;
